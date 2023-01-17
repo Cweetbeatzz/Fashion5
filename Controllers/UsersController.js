@@ -1,4 +1,5 @@
 const Users = require("../Models/Users");
+const Roles = require("../Models/Roles");
 const express = require("express");
 const userRouter = express.Router();
 const { hashPassword } = require("../Services/passwordHash");
@@ -149,6 +150,46 @@ userRouter.get(`/search/:email`, async (req, res) => {
   }
   //########
   res.status(200).send(getSearch);
+});
+//#######################################################
+
+userRouter.put(`/add-user-to-role/:id`, async (req, res) => {
+  //########
+  const { id } = req.params;
+  const { role } = req.body;
+
+  const getUser = await Users.findOne(id);
+  //########
+  if (!getUser) {
+    res.status(404).send({ message: `No User Found` });
+  }
+  //########
+  const getRole = await Roles.findOne(role);
+  //########
+  if (!getRole) {
+    res.status(404).send({ message: `No Role Found` });
+  }
+
+  let oldUserDetails = {
+    firstname: getUser.firstname,
+    lastname: getUser.lastname,
+    username: getUser.username,
+    email: getUser.email,
+    address: getUser.address,
+    phone: getUser.phone,
+    country: getUser.country,
+    state: getUser.state,
+    postalcode: getUser.postalcode,
+    password: getUser.hashedpass,
+    roles: [...getUser.roles, getRole.RoleName],
+  };
+  //
+  const updatedUser = await Users.findByIdAndUpdate(id, {
+    $set: oldUserDetails,
+  });
+
+  //########
+  res.status(200).send({ message: "Success", data: updatedUser });
 });
 
 //#######################################################

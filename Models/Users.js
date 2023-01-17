@@ -62,23 +62,26 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is Required"],
     },
-    profilePicture: {
-      type: String,
-      default: "",
-    },
-    coverPicture: {
-      type: String,
-      default: "",
-    },
-    followers: {
+    // profilePicture: {
+    //   type: String,
+    //   default: "",
+    // },
+    // coverPicture: {
+    //   type: String,
+    //   default: "",
+    // },
+    // followers: {
+    //   type: Array,
+    //   default: [],
+    // },
+    // followings: {
+    //   type: Array,
+    //   default: [],
+    // },
+    roles: {
       type: Array,
-      default: [],
+      default: ["Client"],
     },
-    followings: {
-      type: Array,
-      default: [],
-    },
-
     isAdmin: { type: Boolean, default: false },
     isClient: { type: Boolean, default: true },
     isSeller: { type: Boolean, default: false },
