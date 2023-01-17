@@ -6,10 +6,7 @@ const rolesRouter = express.Router();
 
 rolesRouter.get("/getAllRoles", async (req, res) => {
   const allRoles = await Roles.find({});
-  res.status(200).json({
-    id: allRoles._id,
-    RoleName: allRoles.RoleName,
-  });
+  res.status(200).json(allRoles);
 });
 
 //#######################################################
