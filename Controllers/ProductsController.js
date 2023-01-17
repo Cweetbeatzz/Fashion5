@@ -1,7 +1,7 @@
 const ProductsModel = require("../Models/Products");
 const express = require("express");
 const productsRouter = express.Router();
-const { uploadLocation } = require("../Services/imageUploads");
+const { upload } = require("../Services/imageUploads");
 
 //#######################################################
 
@@ -27,25 +27,28 @@ productsRouter.get("/getAllProductsByCategory/:category", async (req, res) => {
 //#######################################################
 
 //search by company, product name
-productsRouter.get("/getAllProductsBySearch/:search", async (req, res) => {
-  const { productName, company } = req.query;
-  const queryRequest = {};
+productsRouter.get(
+  "/getAllProductsBySearch/:productName_or_company",
+  async (req, res) => {
+    const { productName, company } = req.query;
+    const queryRequest = {};
 
-  if (productName) {
-    queryRequest.productName = { $regex: productName };
+    if (productName) {
+      queryRequest.productName = { $regex: productName };
+    }
+    if (company) {
+      queryRequest.company = { $regex: company };
+    }
+
+    let products;
+
+    products = await ProductsModel.find(queryRequest)
+      .sort({ createdAt: -1 })
+      .limit(30);
+
+    res.status(200).send({ products });
   }
-  if (company) {
-    queryRequest.company = { $regex: company };
-  }
-
-  let products;
-
-  products = await ProductsModel.find(queryRequest)
-    .sort({ createdAt: -1 })
-    .limit(30);
-
-  res.status(200).send({ products });
-});
+);
 
 //#######################################################
 
@@ -73,15 +76,18 @@ productsRouter.get("/getProductsById/:id", async (req, res) => {
 
 productsRouter.post(
   "/createProducts",
-  uploadLocation.single("uploaded_file"),
+  upload.single("uploaded_file"),
   async (req, res, next) => {
+    const url = req.protocol + "://" + req.get("host");
+    //
+    let file = req.file;
     //
     const newProduct = new ProductsModel({
       productName: req.body.productName,
       price: req.body.price,
       category: req.body.category,
       company: req.body.company,
-      productImage: req.file,
+      productImage: file,
       description: req.body.description,
     });
     try {
@@ -98,14 +104,17 @@ productsRouter.post(
 
 productsRouter.put(
   "/updateProductsById/:id",
-  uploadLocation.single("productImage"),
+  upload.single("productImage"),
   async (req, res) => {
+    //
+    let file = req.file.path;
+    //
     let oldProductDetails = {
       name: req.body.name,
       price: req.body.price,
       category: req.body.category,
       company: req.body.company,
-      productImage: req.file,
+      productImage: file,
       description: req.body.description,
     };
     //

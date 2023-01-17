@@ -22,4 +22,10 @@ const generateToken = (user) => {
 
 //#####################################################
 
-module.exports = { generateToken };
+const verifyToken = (token) => {
+  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+  return decoded;
+};
+//#####################################################
+
+module.exports = { generateToken, verifyToken };

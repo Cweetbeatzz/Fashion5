@@ -62,6 +62,22 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is Required"],
     },
+    profilePicture: {
+      type: String,
+      default: "",
+    },
+    coverPicture: {
+      type: String,
+      default: "",
+    },
+    followers: {
+      type: Array,
+      default: [],
+    },
+    followings: {
+      type: Array,
+      default: [],
+    },
 
     isAdmin: { type: Boolean, default: false },
     isClient: { type: Boolean, default: true },

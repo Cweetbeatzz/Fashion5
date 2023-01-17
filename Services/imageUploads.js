@@ -21,21 +21,22 @@ function Acceptfiletype(req, file, cb) {
   if (
     file.mimetype === "image/jpeg" ||
     file.mimetype === "image/png" ||
-    file.mimetype === "image/jpg"
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/gif"
   ) {
     cb(null, true);
   } else {
     //reject a file
-    cb(new Error("Only 'jpeg,png,jpg' images files are surpotted"), false);
+    cb(new Error("Only 'jpeg,png,jpg,gif' images files are surpotted"), false);
   }
 }
 
 //########
-const uploadLocation = multer({
+const upload = multer({
   // dest: "uploads/",
   storage: storage,
   limits: { filesize: 1024 * 1024 * 5 },
   fileFilter: Acceptfiletype,
 });
 
-module.exports = { uploadLocation };
+module.exports = { upload };
