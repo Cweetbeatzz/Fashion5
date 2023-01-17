@@ -29,7 +29,7 @@ rolesRouter.get("/getRolesById/:id", async (req, res) => {
 
 //#######################################################
 
-rolesRouter.post("/createRoles", async (req, res) => {
+rolesRouter.post("/createRole", async (req, res) => {
   const newRole = new Roles({
     RoleName: req.body.RoleName,
   });
