@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { roles } = require("../utils/constants");
 
 const UserSchema = new mongoose.Schema(
   {
@@ -80,12 +81,19 @@ const UserSchema = new mongoose.Schema(
     // },
     roles: {
       type: Array,
-      default: ["Client"],
+      default: [roles.client],
     },
-    isAdmin: { type: Boolean, default: false },
-    isClient: { type: Boolean, default: true },
-    isSeller: { type: Boolean, default: false },
-    isTransit: { type: Boolean, default: false },
+    roles2: {
+      type: String,
+      enum: [
+        roles.client,
+        roles.admin,
+        roles.ceo,
+        roles.logistics,
+        roles.manager,
+      ],
+      default: roles.client,
+    },
   },
   {
     timestamps: true,
