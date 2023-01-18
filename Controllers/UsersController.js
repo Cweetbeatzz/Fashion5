@@ -5,36 +5,36 @@ const userRouter = express.Router();
 const { hashPassword } = require("../Services/passwordHash");
 const { generateToken } = require("../Services/Jwt");
 const { roles } = require("../utils/constants");
+const { ensureLogginIn } = require("../Middlewares/LoggedInAuthorization");
+const { ensureAdmin } = require("../Middlewares/AdminAuthorization");
 
 //#######################################################
 
-userRouter.get("/getAllUsers", async (req, res) => {
-  const allusers = await Users.find({});
-  res.status(200).json({
-    firstname: allusers.firstname,
-    lastname: allusers.lastname,
-    username: allusers.username,
-    email: allusers.email,
-    address: allusers.address,
-    phone: allusers.phone,
-    country: allusers.country,
-    state: allusers.state,
-    postalcode: allusers.postalcode,
-  });
-});
+userRouter.get(
+  "/getAllUsers",
+  ensureLogginIn,
+  ensureAdmin,
+  async (req, res) => {
+    const allusers = await Users.find({});
+    res.status(200).json({
+      firstname: allusers.firstname,
+      lastname: allusers.lastname,
+      username: allusers.username,
+      email: allusers.email,
+      address: allusers.address,
+      phone: allusers.phone,
+      country: allusers.country,
+      state: allusers.state,
+      postalcode: allusers.postalcode,
+    });
+  }
+);
 
 //#######################################################
 
 userRouter.get("/getUsersById/:id", async (req, res) => {
   //
   const users = await Users.findById(req.params.id);
-
-  // const userId = req.query.id;
-  // const username = req.query.username;
-
-  // const user = userId
-  //   ? await Users.findById(userId)
-  //   : await Users.findOne({ username: username });
 
   if (!users) {
     res.status(404).send({ message: `No task matching the following ID` });

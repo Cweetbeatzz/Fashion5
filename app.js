@@ -14,6 +14,8 @@ const cors = require("cors");
 const socket = require("socket.io");
 const http = require("http");
 const app = express();
+const { ensureLogginIn } = require("./Middlewares/LoggedInAuthorization");
+const { ensureAdmin } = require("./Middlewares/AdminAuthorization");
 
 //<----------- middlewares ---------------->
 //use static files
@@ -36,7 +38,7 @@ server = http.createServer(app);
 //<----------- routes ---------------->
 app.use("/fashion5/api/v1/products", productsRouter);
 app.use("/fashion5/api/v1/users", usersRouter);
-app.use("/fashion5/api/v1/roles", rolesRouter);
+app.use("/fashion5/api/v1/roles", ensureLogginIn, ensureAdmin, rolesRouter);
 app.use("/fashion5/api/v1/category", categoryRouter);
 app.use("/fashion5/api/v1/auth", authRouter);
 app.use("/fashion5/api/v1/stripe", stripeRouter);
