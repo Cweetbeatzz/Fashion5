@@ -71,13 +71,13 @@ userRouter.post("/createUsers", async (req, res) => {
   const hashedpass = hashPassword(password);
   let setRole = userRole;
 
-  if (email === process.env.ADMIN_EMAIL) {
+  if (email === process.env.ADMIN_EMAIL || setRole === roles.admin) {
     //set role to admin
     setRole = roles.admin;
-  } else if (email === process.env.MANAGER_EMAIL) {
+  } else if (email === process.env.MANAGER_EMAIL || setRole === roles.manager) {
     //set role to manager
     setRole = roles.manager;
-  } else if (email === process.env.CEO_EMAIL) {
+  } else if (email === process.env.CEO_EMAIL || setRole === roles.ceo) {
     //set role to ceo
     setRole = roles.ceo;
   } else {
@@ -96,6 +96,7 @@ userRouter.post("/createUsers", async (req, res) => {
     postalcode: postalcode,
     password: hashedpass,
     roles2: setRole,
+    // userRoles: [...userRoles, setRole],
   });
 
   try {

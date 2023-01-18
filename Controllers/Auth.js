@@ -20,10 +20,6 @@ authRouter.post("/login", async (req, res) => {
         id: searchUserEmail._id,
         username: searchUserEmail.username,
         email: searchUserEmail.email,
-        isAdmin: searchUserEmail.isAdmin,
-        isClient: searchUserEmail.isClient,
-        isSeller: searchUserEmail.isSeller,
-        isTransit: searchUserEmail.isTransit,
         token: generateToken(searchUserEmail),
       });
       return;

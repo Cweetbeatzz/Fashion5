@@ -79,7 +79,7 @@ const UserSchema = new mongoose.Schema(
     //   type: Array,
     //   default: [],
     // },
-    roles: {
+    userRoles: {
       type: Array,
       default: [roles.client],
     },
