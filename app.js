@@ -19,6 +19,7 @@ const { ensureAdmin } = require("./Middlewares/AdminAuthorization");
 const { ensureCeo } = require("./Middlewares/CeoAuthorization");
 const { ensureManager } = require("./Middlewares/ManagerAuthorization");
 const { ensureLogistics } = require("./Middlewares/LogisticsAuthorization");
+const cookieParser = require("cookie-parser");
 
 //<----------- middlewares ---------------->
 //use static files
@@ -28,6 +29,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(helmet());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 //
 app.get("/", (req, res) => {
@@ -52,6 +54,31 @@ app.use(
 app.use("/fashion5/api/v1/category", categoryRouter);
 app.use("/fashion5/api/v1/auth", authRouter);
 app.use("/fashion5/api/v1/stripe", stripeRouter);
+
+
+
+//#############################################################
+//cookies
+
+app.get("/set-cookies", (req, res) => {
+  // res.setHeader("Set-cookie", "Paytrust-User=true");
+
+  res.cookie("PaytrustUser", false);
+  res.cookie("PaytrustAdmin", true, {
+    maxAge: 1000 * 60 * 60 * 24,
+    secure: true,
+  });
+
+  res.send("Authorised User");
+  //install cookie-parser
+});
+
+app.get("/get-cookies", (req, res) => {
+  const cookies = req.cookies;
+  res.send(cookies);
+});
+
+//#############################################################
 
 const port = process.env.PORT || 6800;
 
