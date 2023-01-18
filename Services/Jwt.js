@@ -14,7 +14,7 @@ const generateToken = (user) => {
       email: user.email,
     },
     process.env.JWT_SECRET_KEY,
-    { expiresIn: maxAge }
+    { expiresIn: "3d" }
   );
   return token;
 };

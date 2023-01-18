@@ -10,6 +10,7 @@ const authRouter = express.Router();
 authRouter.post("/login", async (req, res) => {
   //search fr email
   const searchUserEmail = await Users.findOne({ email: req.body.email });
+  const generatedToken = generateToken(searchUserEmail);
 
   // compare passwords
   if (searchUserEmail) {
@@ -20,7 +21,12 @@ authRouter.post("/login", async (req, res) => {
         id: searchUserEmail._id,
         username: searchUserEmail.username,
         email: searchUserEmail.email,
-        token: generateToken(searchUserEmail),
+        token: generatedToken,
+      });
+      //set cookie
+      res.cookie("Fashion5User", generatedToken, {
+        maxAge: 259200000, //3 days converted to millisecound
+        httpOnly: true,
       });
       return;
     }
@@ -30,7 +36,9 @@ authRouter.post("/login", async (req, res) => {
 
 //#############################################################
 
-authRouter.post("/logout", (req, res) => {});
+authRouter.post("/logout", (req, res) => {
+  res.cookie("Fashion5User", "", { maxAge: 1 });
+});
 
 //#############################################################
 
