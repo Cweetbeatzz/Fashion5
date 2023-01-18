@@ -55,29 +55,6 @@ app.use("/fashion5/api/v1/category", categoryRouter);
 app.use("/fashion5/api/v1/auth", authRouter);
 app.use("/fashion5/api/v1/stripe", stripeRouter);
 
-
-
-//#############################################################
-//cookies
-
-app.get("/set-cookies", (req, res) => {
-  // res.setHeader("Set-cookie", "Paytrust-User=true");
-
-  res.cookie("PaytrustUser", false);
-  res.cookie("PaytrustAdmin", true, {
-    maxAge: 1000 * 60 * 60 * 24,
-    secure: true,
-  });
-
-  res.send("Authorised User");
-  //install cookie-parser
-});
-
-app.get("/get-cookies", (req, res) => {
-  const cookies = req.cookies;
-  res.send(cookies);
-});
-
 //#############################################################
 
 const port = process.env.PORT || 6800;
