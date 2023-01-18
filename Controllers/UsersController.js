@@ -4,6 +4,7 @@ const express = require("express");
 const userRouter = express.Router();
 const { hashPassword } = require("../Services/passwordHash");
 const { generateToken } = require("../Services/Jwt");
+const { roles } = require("../utils/constants");
 
 //#######################################################
 
@@ -54,32 +55,63 @@ userRouter.get("/getUsersById/:id", async (req, res) => {
 //#######################################################
 
 userRouter.post("/createUsers", async (req, res) => {
-  const hashedpass = hashPassword(req.body.password);
+  const {
+    firstname,
+    lastname,
+    username,
+    email,
+    address,
+    phone,
+    country,
+    state,
+    postalcode,
+    password,
+    userRole,
+  } = req.body;
+  const hashedpass = hashPassword(password);
+  let setRole = userRole;
+
+  if (email === process.env.ADMIN_EMAIL) {
+    //set role to admin
+    setRole = roles.admin;
+  } else if (email === process.env.MANAGER_EMAIL) {
+    //set role to manager
+    setRole = roles.manager;
+  } else if (email === process.env.CEO_EMAIL) {
+    //set role to ceo
+    setRole = roles.ceo;
+  } else {
+    setRole = roles.client;
+  }
 
   const newUser = new Users({
-    firstname: req.body.firstname,
-    lastname: req.body.lastname,
-    username: req.body.username,
-    email: req.body.email,
-    address: req.body.address,
-    phone: req.body.phone,
-    country: req.body.country,
-    state: req.body.state,
-    postalcode: req.body.postalcode,
+    firstname: firstname,
+    lastname: lastname,
+    username: username,
+    email: email,
+    address: address,
+    phone: phone,
+    country: country,
+    state: state,
+    postalcode: postalcode,
     password: hashedpass,
+    roles2: setRole,
   });
 
   try {
     const created = await newUser.save();
     res.status(201).json({
       id: created._id,
+      firstname: created.firstname,
+      lastname: created.lastname,
       username: created.username,
       email: created.email,
-      isAdmin: created.isAdmin,
-      isClient: created.isClient,
-      isSeller: created.isSeller,
-      isTransit: created.isTransit,
-      // token: generateToken(created),
+      address: created.address,
+      phone: created.phone,
+      country: created.country,
+      state: created.state,
+      postalcode: created.postalcode,
+      roles2: created.roles2,
     });
   } catch (error) {
     res.status(404).send(error);
