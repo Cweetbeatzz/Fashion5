@@ -32,25 +32,30 @@ userRouter.get(
 
 //#######################################################
 
-userRouter.get("/getUsersById/:id", async (req, res) => {
-  //
-  const users = await Users.findById(req.params.id);
+userRouter.get(
+  "/getUsersById/:id",
+  ensureLogginIn,
+  ensureAdmin,
+  async (req, res) => {
+    //
+    const users = await Users.findById(req.params.id);
 
-  if (!users) {
-    res.status(404).send({ message: `No task matching the following ID` });
+    if (!users) {
+      res.status(404).send({ message: `No task matching the following ID` });
+    }
+    res.status(200).send({
+      firstname: users.firstname,
+      lastname: users.lastname,
+      username: users.username,
+      email: users.email,
+      address: users.address,
+      phone: users.phone,
+      country: users.country,
+      state: users.state,
+      postalcode: users.postalcode,
+    });
   }
-  res.status(200).send({
-    firstname: users.firstname,
-    lastname: users.lastname,
-    username: users.username,
-    email: users.email,
-    address: users.address,
-    phone: users.phone,
-    country: users.country,
-    state: users.state,
-    postalcode: users.postalcode,
-  });
-});
+);
 
 //#######################################################
 
@@ -121,109 +126,129 @@ userRouter.post("/createUsers", async (req, res) => {
 
 //#######################################################
 
-userRouter.put("/updateUsersById/:id", async (req, res) => {
-  const hashedpass = hashPassword(req.body.password);
-  let oldUserDetails = {
-    firstname: req.body.firstname,
-    lastname: req.body.lastname,
-    username: req.body.username,
-    email: req.body.email,
-    address: req.body.address,
-    phone: req.body.phone,
-    country: req.body.country,
-    state: req.body.state,
-    postalcode: req.body.postalcode,
-    password: hashedpass,
-  };
-  //
-  const updatedUser = await Users.findByIdAndUpdate(req.params.id, {
-    $set: oldUserDetails,
-  });
+userRouter.put(
+  "/updateUsersById/:id",
+  ensureLogginIn,
+  ensureAdmin,
+  async (req, res) => {
+    const hashedpass = hashPassword(req.body.password);
+    let oldUserDetails = {
+      firstname: req.body.firstname,
+      lastname: req.body.lastname,
+      username: req.body.username,
+      email: req.body.email,
+      address: req.body.address,
+      phone: req.body.phone,
+      country: req.body.country,
+      state: req.body.state,
+      postalcode: req.body.postalcode,
+      password: hashedpass,
+    };
+    //
+    const updatedUser = await Users.findByIdAndUpdate(req.params.id, {
+      $set: oldUserDetails,
+    });
 
-  if (!updatedUser) {
-    res.status(404).send({ message: `No task matching the following ID` });
+    if (!updatedUser) {
+      res.status(404).send({ message: `No task matching the following ID` });
+    }
+    res.status(200).send([
+      { message: "Update Successful" },
+      {
+        firstname: updatedUser.firstname,
+        lastname: updatedUser.lastname,
+        username: updatedUser.username,
+        email: updatedUser.email,
+        address: updatedUser.address,
+        phone: updatedUser.phone,
+        country: updatedUser.country,
+        state: updatedUser.state,
+        postalcode: updatedUser.postalcode,
+      },
+    ]);
   }
-  res.status(200).send([
-    { message: "Update Successful" },
-    {
-      firstname: updatedUser.firstname,
-      lastname: updatedUser.lastname,
-      username: updatedUser.username,
-      email: updatedUser.email,
-      address: updatedUser.address,
-      phone: updatedUser.phone,
-      country: updatedUser.country,
-      state: updatedUser.state,
-      postalcode: updatedUser.postalcode,
-    },
-  ]);
-});
+);
 
 //#######################################################
 
-userRouter.delete("/deleteUsersById/:id", async (req, res) => {
-  //
-  const userById = await Users.findByIdAndDelete(req.params.id);
+userRouter.delete(
+  "/deleteUsersById/:id",
+  ensureLogginIn,
+  ensureAdmin,
+  async (req, res) => {
+    //
+    const userById = await Users.findByIdAndDelete(req.params.id);
 
-  if (!userById) {
-    res.status(404).send({ message: `No task matching the following ID` });
+    if (!userById) {
+      res.status(404).send({ message: `No task matching the following ID` });
+    }
+    res.status(200).send([{ message: `Delete Successfull` }, {}]);
   }
-  res.status(200).send([{ message: `Delete Successfull` }, {}]);
-});
+);
 
 //#######################################################
 
-userRouter.get(`/search/:email`, async (req, res) => {
-  //########
-  const _email = req.body.email;
-  const getSearch = await Users.findOne(_email);
-  //########
-  if (!getSearch) {
-    res.status(404).send({ message: `No Email Found` });
+userRouter.get(
+  `/search/:email`,
+  ensureLogginIn,
+  ensureAdmin,
+  async (req, res) => {
+    //########
+    const _email = req.body.email;
+    const getSearch = await Users.findOne(_email);
+    //########
+    if (!getSearch) {
+      res.status(404).send({ message: `No Email Found` });
+    }
+    //########
+    res.status(200).send(getSearch);
   }
-  //########
-  res.status(200).send(getSearch);
-});
+);
 //#######################################################
 
-userRouter.put(`/add-user-to-role/:id`, async (req, res) => {
-  //########
-  const { id } = req.params;
-  const { role } = req.body;
+userRouter.put(
+  `/add-user-to-role/:id`,
+  ensureLogginIn,
+  ensureAdmin,
+  async (req, res) => {
+    //########
+    const { id } = req.params;
+    const { role } = req.body;
 
-  const getUser = await Users.findOne(id);
-  //########
-  if (!getUser) {
-    res.status(404).send({ message: `No User Found` });
+    const getUser = await Users.findOne(id);
+    //########
+    if (!getUser) {
+      res.status(404).send({ message: `No User Found` });
+    }
+    //########
+    const getRole = await Roles.findOne(role);
+    //########
+    if (!getRole) {
+      res.status(404).send({ message: `No Role Found` });
+    }
+
+    let oldUserDetails = {
+      firstname: getUser.firstname,
+      lastname: getUser.lastname,
+      username: getUser.username,
+      email: getUser.email,
+      address: getUser.address,
+      phone: getUser.phone,
+      country: getUser.country,
+      state: getUser.state,
+      postalcode: getUser.postalcode,
+      password: getUser.hashedpass,
+      roles: [...getUser.roles, getRole.RoleName],
+    };
+    //
+    const updatedUser = await Users.findByIdAndUpdate(id, {
+      $set: oldUserDetails,
+    });
+
+    //########
+    res.status(200).send({ message: "Success", data: updatedUser });
   }
-  //########
-  const getRole = await Roles.findOne(role);
-  //########
-  if (!getRole) {
-    res.status(404).send({ message: `No Role Found` });
-  }
-
-  let oldUserDetails = {
-    firstname: getUser.firstname,
-    lastname: getUser.lastname,
-    username: getUser.username,
-    email: getUser.email,
-    address: getUser.address,
-    phone: getUser.phone,
-    country: getUser.country,
-    state: getUser.state,
-    postalcode: getUser.postalcode,
-    password: getUser.hashedpass,
-    roles: [...getUser.roles, getRole.RoleName],
-  };
-  //
-  const updatedUser = await Users.findByIdAndUpdate(id, {
-    $set: oldUserDetails,
-  });
-
-  //########
-  res.status(200).send({ message: "Success", data: updatedUser });
-});
+);
 
 //#######################################################
 //#######################################################
