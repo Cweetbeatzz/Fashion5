@@ -20,6 +20,7 @@ const { ensureCeo } = require("./Middlewares/CeoAuthorization");
 const { ensureManager } = require("./Middlewares/ManagerAuthorization");
 const { ensureLogistics } = require("./Middlewares/LogisticsAuthorization");
 const cookieParser = require("cookie-parser");
+const passport = require("passport");
 
 //<----------- middlewares ---------------->
 //use static files
@@ -30,6 +31,8 @@ app.use(cors());
 app.use(helmet());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session());
 
 //
 app.get("/", (req, res) => {
