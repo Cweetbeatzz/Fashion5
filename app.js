@@ -21,6 +21,7 @@ const { ensureManager } = require("./Middlewares/ManagerAuthorization");
 const { ensureLogistics } = require("./Middlewares/LogisticsAuthorization");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
+var session = require("express-session");
 
 //<----------- middlewares ---------------->
 //use static files
@@ -31,8 +32,15 @@ app.use(cors());
 app.use(helmet());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
+// app.use(
+//   session({
+//     secret: "keyboard cat",
+//     resave: false,
+//     saveUninitialized: true,
+//   })
+// );
 
 //
 app.get("/", (req, res) => {
