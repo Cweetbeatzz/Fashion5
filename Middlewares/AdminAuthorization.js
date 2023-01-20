@@ -3,6 +3,7 @@ const { roles } = require("../utils/constants");
 //#######################################################
 
 const ensureAdmin = (req, res, next) => {
+    const authorization = req.headers.authorization;
   if (req.User.role2 === roles.admin) {
     next();
   } else {

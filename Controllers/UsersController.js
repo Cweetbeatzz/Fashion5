@@ -12,7 +12,7 @@ const { ensureAdmin } = require("../Middlewares/AdminAuthorization");
 
 userRouter.get(
   "/getAllUsers",
-  ensureLogginIn,
+  // ensureLogginIn,
   ensureAdmin,
   async (req, res) => {
     const allusers = await Users.find({});
@@ -26,6 +26,7 @@ userRouter.get(
       country: allusers.country,
       state: allusers.state,
       postalcode: allusers.postalcode,
+      // roles2: allusers.roles2,
     });
   }
 );
@@ -53,6 +54,7 @@ userRouter.get(
       country: users.country,
       state: users.state,
       postalcode: users.postalcode,
+      roles2: users.roles2,
     });
   }
 );
@@ -164,6 +166,7 @@ userRouter.put(
         country: updatedUser.country,
         state: updatedUser.state,
         postalcode: updatedUser.postalcode,
+        roles2: updatedUser.roles2,
       },
     ]);
   }

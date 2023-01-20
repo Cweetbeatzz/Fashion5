@@ -79,10 +79,10 @@ const UserSchema = new mongoose.Schema(
     //   type: Array,
     //   default: [],
     // },
-    userRoles: {
-      type: Array,
-      default: [roles.client],
-    },
+    // userRoles: {
+    //   type: Array,
+    //   default: [roles.client],
+    // },
     roles2: {
       type: String,
       enum: [
