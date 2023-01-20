@@ -12,8 +12,8 @@ const { ensureAdmin } = require("../Middlewares/AdminAuthorization");
 
 userRouter.get(
   "/getAllUsers",
-  // ensureLogginIn,
-  ensureAdmin,
+  ensureLogginIn,
+  // ensureAdmin,
   async (req, res) => {
     const allusers = await Users.find({});
     res.status(200).json({
