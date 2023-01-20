@@ -21,6 +21,7 @@ authRouter.post("/login", async (req, res) => {
         id: searchUserEmail._id,
         username: searchUserEmail.username,
         email: searchUserEmail.email,
+        roles2: searchUserEmail.roles2,
         token: generatedToken,
       });
       //set cookie
@@ -31,7 +32,7 @@ authRouter.post("/login", async (req, res) => {
       return;
     }
   }
-  res.status(401).send({ error: "Unauthorized access" });
+  res.status(401).send({ error: "Invalid Credientials...Please try again" });
 });
 
 //#############################################################

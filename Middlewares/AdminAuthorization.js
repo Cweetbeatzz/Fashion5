@@ -6,7 +6,9 @@ const ensureAdmin = (req, res, next) => {
   if (req.User.role2 === roles.admin) {
     next();
   } else {
-    res.send("Unauthorized Access");
+    res
+      .status(401)
+      .send({ message: "Error", data: "Not Authorized...Admin Access only" });
   }
 };
 
