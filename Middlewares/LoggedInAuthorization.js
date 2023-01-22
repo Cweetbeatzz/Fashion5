@@ -7,14 +7,14 @@ const ensureLogginIn = (req, res, next) => {
   try {
     // JWT
     //must be logged in before access
-    if (!authorization || authorization.startsWith("Bearer")) {
+    if (!authorization || !authorization.startsWith("Bearer")) {
       res.status(401).send({ message: "Error", data: "Please Login..." });
     }
 
     const token = authorization.split("")[1];
     const decoded = verifyToken(token);
-    const { email } = decoded;
-    req.user = email;
+    const { id, username, email, roles2 } = decoded;
+    req.user = { id, username, email, roles2 };
     next();
   } catch (error) {
     res.status(401).send({ message: "Error", data: "Not Authorized..." });
@@ -30,7 +30,7 @@ const ensureLoginWithPermissions = (permissions) => {
     try {
       // JWT
       //must be logged in before access
-      if (!authorization || authorization.startsWith("Bearer")) {
+      if (!authorization || !authorization.startsWith("Bearer")) {
         res
           .status(401)
           .send({ message: "Error", data: "invalid credentials..." });
@@ -38,8 +38,8 @@ const ensureLoginWithPermissions = (permissions) => {
 
       const token = authorization.split("")[1];
       const decoded = verifyToken(token);
-      const { email } = decoded;
-      req.user = email;
+      const { id, username, email, roles2 } = decoded;
+      req.user = { id, username, email, roles2 };
 
       if (permissions.includes(userRole)) {
         next();
