@@ -15,18 +15,10 @@ userRouter.get(
   ensureLogginIn,
   // ensureAdmin,
   async (req, res) => {
-    const allusers = await Users.find({});
+    const users = await Users.find();
     res.status(200).json({
-      firstname: allusers.firstname,
-      lastname: allusers.lastname,
-      username: allusers.username,
-      email: allusers.email,
-      address: allusers.address,
-      phone: allusers.phone,
-      country: allusers.country,
-      state: allusers.state,
-      postalcode: allusers.postalcode,
-      // roles2: allusers.roles2,
+      message: "Success",
+      data: users,
     });
   }
 );
@@ -45,16 +37,19 @@ userRouter.get(
       res.status(404).send({ message: `No task matching the following ID` });
     }
     res.status(200).send({
-      firstname: users.firstname,
-      lastname: users.lastname,
-      username: users.username,
-      email: users.email,
-      address: users.address,
-      phone: users.phone,
-      country: users.country,
-      state: users.state,
-      postalcode: users.postalcode,
-      roles2: users.roles2,
+      message: "Success",
+      data: {
+        firstname: users.firstname,
+        lastname: users.lastname,
+        username: users.username,
+        email: users.email,
+        address: users.address,
+        phone: users.phone,
+        country: users.country,
+        state: users.state,
+        postalcode: users.postalcode,
+        roles2: users.roles2,
+      },
     });
   }
 );

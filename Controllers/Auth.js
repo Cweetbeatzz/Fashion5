@@ -8,32 +8,48 @@ const authRouter = express.Router();
 //#############################################################
 //
 authRouter.post("/login", async (req, res) => {
-  //search fr email
-  const searchUserEmail = await Users.findOne({ email: req.body.email });
-  // console.log("logged ", searchUserEmail);
-  const generatedToken = generateToken(searchUserEmail);
+  const { email, password } = req.body;
+  try {
+    // if (!email || !password) {
+    //   res.status(400).send({
+    //     message: "Error",
+    //     data: "Please provide your email & password",
+    //   });
+    // }
 
-  // compare passwords
-  if (searchUserEmail) {
-    //if password correct
-    if (comparePasswords(req.body.password, searchUserEmail.password)) {
-      //send these details plus the generated token
-      res.status(200).send({
-        id: searchUserEmail._id,
-        username: searchUserEmail.username,
-        email: searchUserEmail.email,
-        roles2: searchUserEmail.roles2,
-        token: generatedToken,
-      });
-      //set cookie
-      // res.cookie("Fashion5User", generatedToken, {
-      //   maxAge: 259200000, //3 days converted to millisecound
-      //   httpOnly: true,
-      // });
-      return;
+    //search fr email
+    const searchUserEmail = await Users.findOne({ email: email });
+    // console.log("logged ", searchUserEmail);
+    const generatedToken = generateToken(searchUserEmail);
+
+    // compare passwords
+    if (searchUserEmail) {
+      //if password correct
+      if (comparePasswords(req.body.password, searchUserEmail.password)) {
+        //set cookie
+        res.cookie("AccessToken", generatedToken, {
+          maxAge: 259200000, //3 days converted to millisecound
+          httpOnly: true,
+        });
+        //send these details plus the generated token
+        res.status(200).send({
+          message: "Success",
+          user: {
+            id: searchUserEmail._id,
+            username: searchUserEmail.username,
+            email: searchUserEmail.email,
+            roles2: searchUserEmail.roles2,
+            token: generatedToken,
+          },
+        });
+
+        return;
+      }
     }
+    res.status(401).send({ error: "Invalid Credientials...Please try again" });
+  } catch (error) {
+    res.status(500).send({ message: "Error", data: "Internal Server Error" });
   }
-  res.status(401).send({ error: "Invalid Credientials...Please try again" });
 });
 
 //#############################################################
