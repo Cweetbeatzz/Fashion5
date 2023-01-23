@@ -12,7 +12,7 @@ const ensureLogginIn = async (req, res, next) => {
       res.status(401).send({ message: "Error", data: "Please Login..." });
     }
 
-    const token = authorization.split("")[1];
+    const token = authorization.split(" ")[1];
     const decoded = verifyToken(token);
 
     // const findUser = await User.findById(decoded.id);
@@ -46,7 +46,7 @@ const ensureLoginWithPermissions = (permissions) => {
           .send({ message: "Error", data: "invalid credentials..." });
       }
 
-      const token = authorization.split("")[1];
+      const token = authorization.split(" ")[1];
       const decoded = verifyToken(token);
       const { id, username, email, roles2 } = decoded;
       req.user = { id, username, email, roles2 };
