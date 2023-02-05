@@ -82,6 +82,7 @@ const port = process.env.PORT || 6800;
 
 io.on("connection", (client) => {
   client.emit("event", client.id);
+  
   client.on("disconnect", () => {
     client.broadcast.emit("Call Ended");
   });
