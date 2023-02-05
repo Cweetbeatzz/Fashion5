@@ -11,8 +11,7 @@ const stripeRouter = require("./Controllers/StripeController");
 const db = require("./Database/connection");
 require("express-async-errors");
 const cors = require("cors");
-const socket = require("socket.io");
-const http = require("http");
+
 const app = express();
 const { ensureLogginIn } = require("./Middlewares/LoggedInAuthorization");
 const { ensureAdmin } = require("./Middlewares/AdminAuthorization");
@@ -21,7 +20,18 @@ const { ensureManager } = require("./Middlewares/ManagerAuthorization");
 const { ensureLogistics } = require("./Middlewares/LogisticsAuthorization");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
-var session = require("express-session");
+let session = require("express-session");
+const http = require("http");
+let server = require("http").createServer(app);
+
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
+//#############################################################
 
 //<----------- middlewares ---------------->
 //use static files
@@ -46,9 +56,7 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   res.send(`<h2>Welcome to Fashion5 API</h3>`);
 });
-//#############################################################
-let server;
-server = http.createServer(app);
+
 //#############################################################
 
 //<----------- routes ---------------->
@@ -69,7 +77,23 @@ app.use("/fashion5/api/v1/stripe", stripeRouter);
 //#############################################################
 
 const port = process.env.PORT || 6800;
+//#############################################################
+// *Socket connection
 
+io.on("connection", (client) => {
+  client.emit("event", client.id);
+  client.on("disconnect", () => {
+    client.broadcast.emit("Call Ended");
+  });
+
+  client.on("CallUser", ({ userToCall, signalData, from, name }) => {
+    io.to(userToCall).emit("userToCall", { signal: signalData, from, name });
+  });
+
+  client.on("answerCall", (data) => {
+    io.to(data.to).emit("allAccepted", data.signal);
+  });
+});
 //#############################################################
 
 //database check
